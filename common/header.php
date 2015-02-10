@@ -17,31 +17,46 @@
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/index.php">Croquet Tracker</a>
+          <a class="navbar-brand" href="./index.php">Croquet Tracker</a>
         </div>
-        <!-- If logged out -->
-        <div id="navbar" class="navbar-collapse collapse">
-          <form class="navbar-form navbar-right">
-            <div class="form-group">
-              <input type="text" placeholder="Email" class="form-control">
-            </div>
-            <div class="form-group">
-              <input type="password" placeholder="Password" class="form-control">
-            </div>
-            <button type="submit" class="btn btn-success">Sign in</button>
-          </form>
-        </div><!--/.navbar-collapse -->
 
         <!-- If logged in -->
-        <div id="navbar" class="navbar-collapse collapse">
-        	<a href="/logout.php">
-        		<button type="button" class="btn btn-default navbar-btn">Log Out</button>
-        	</a> 
-        	<a href="/account.php" class="button">
-        	<button type="button" class="btn btn-default navbar-btn">Your Account</button>
-        	</a>
-        </div>
+        <?php
+        if(!empty($_SESSION['LoggedIn']) && !empty($_SESSION['Username']))
+        {
+          ?>
+          <div id="navbar" class="navbar-collapse collapse">
+            <a href="./logout.php">
+            <button type="button" class="btn btn-default navbar-btn">Log Out</button>
+            </a> 
+            <a href="./account.php" class="button">
+            <button type="button" class="btn btn-default navbar-btn">Your Account</button>
+            </a>
+          </div>
+          <?php 
+        }
+          
+        // <!-- If logged out -->
+        else
+        {
+          ?>
+          <div id="navbar" class="navbar-collapse collapse">
+            <form action="login.php" method="post" class="navbar-form navbar-right">
+            <div class="form-group">
+              <input type="text" placeholder="User Name" name="username" class="form-control" >
+            </div>
+            <div class="form-group">
+              <input type="password" placeholder="Password" name="password" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-success navbar-btn">Sign in</button>
+            </form>
+          </div>
+            <?php
+        } 
+        ?>
+        </nav>
+        </div><!--/.navbar-collapse -->
       </div><!-- /container -->
-    </nav>
+      <br><br><br>
+    <!-- </nav> -->
