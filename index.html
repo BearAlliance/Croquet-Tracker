@@ -1,88 +1,81 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="ctrack">
+
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>cTrack</title>
-  <!-- Bootstrap -->
-  <link href="css/bootstrap.min.css" rel="stylesheet">
-  <!-- Angular.js -->
-  <script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
-  <script type="text/javascript" src="./ctrack.js"></script>
+	<meta charset="utf-8">
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+  	<title>cTrack</title>
+	<!-- Bootstrap -->
+  	<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+
+  	<!-- Angular.js -->
+	<script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+	<!-- UI Routing -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.13/angular-ui-router.min.js"></script>
+
+	<!-- App -->
+	<script src="ctrack.js"></script> 
 </head>
 
 <body>
-  <nav class="navbar navbar-inverse">
-    <div class="container-fluid" ng-controller="navController as nav">
-      <div class="navbar-header">
-        <!-- Mobile screen collapse toggle button -->
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="./index.php">Croquet Tracker</a> 
-      </div> <!-- /navbar-header -->
-      <div id="navbar" class="navbar-collapse collapse">
-        <ul class="nav navbar-nav">
-          <li ng-class="{ active: currentPage == 1}">
-            <a href ng-click="currentPage = 1">Home</a></li>
-          <li ng-class="{ active: currentPage == 2}">
-            <a href ng-click="currentPage = 2">About</a></li>
-        </ul>
+	<nav class="navbar navbar-default">
+	  <div class="container-fluid">
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+	        <span class="sr-only">Toggle navigation</span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	      </button>
+	      <a class="navbar-brand" href="#/home">cTrack</a>
+	    </div>
 
-        <!-- Sign In form -->
-        <div ng-hide="nav.loggedIn">
-          <form action="login.php" method="post" class="navbar-form navbar-right">
-            <div class="form-group">
-              <input type="text" placeholder="Username" name="username" class="form-control" >
-            </div>
-            <div class="form-group">
-              <input type="password" placeholder="Password" name="password" class="form-control">
-            </div>
-            <button type="submit" class="btn btn-success navbar-btn">Sign in</button>
-          </form>
-        </div>
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <ul class="nav navbar-nav">
+	        <li><a href="#/home">Home</a></li>
+	        <li><a href="#/contact">Contact</a></li>
+	        <li><a href="#/about">About</a></li>
+	        <li class="dropdown">
+	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
+	          <ul class="dropdown-menu" role="menu">
+	            <li><a href="#">Action</a></li>
+	            <li><a href="#">Another action</a></li>
+	            <li><a href="#">Something else here</a></li>
+	            <li class="divider"></li>
+	            <li><a href="#">Separated link</a></li>
+	            <li class="divider"></li>
+	            <li><a href="#">One more separated link</a></li>
+	          </ul>
+	        </li>
+	      </ul>
+	      
+	    	<ul class="nav navbar-nav navbar-right">
+		      	<li><!-- Sign In -->
+		        <form action="login.php" method="post" class="navbar-form navbar-right">
+		            <div class="form-group">
+		              <input type="text" placeholder="Username" name="username" class="form-control" >
+		            </div>
+		            <div class="form-group">
+		              <input type="password" placeholder="Password" name="password" class="form-control">
+		            </div>
+		            <button type="submit" class="btn btn-primary navbar-btn">Sign In</button>
+		        </form>
+		        </li>
+		        <li>
+		        <a href="#/signup"><button class="btn btn-success">Sign Up</button></a>
+		        </li>
+	    	</ul>
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
 
-      </div> <!-- /navbar -->
-    </div><!-- /container -->
-  </nav>
+	<!-- Injected Views -->
+	<div ui-view></div>
 
-  <!-- Jumbotron -->
-  <div class="jumbotron" ng-controller="NavController as nav" ng-show="ctrack.currentPage == 1">
-    <div class="container">
-      <h1>Hello!</h1>
-      <a href="gameview.php">
-        <button type="button" class="btn btn-success">
-          New game </button>
-      </a>
-      <p> Need to add: old games </p>
-    </div>
-  </div>
-
-  <div class="container" ng-show="ctrack.currentPage == 2">
-  <div class="row">
-    <div class="col-sm-4" "col-sm-offset-4">
-      <p>
-        CTrack is an open-source project created by Nick Cacace, a graduate student at SUNY New Paltz. <br>
-        It was created so he didn't have to haul around those heavy deadness boards, and worry about loosing the papers with wins and losess. <br><br>
-        CTrack makes use of other open source software: <br>
-        <a href="http://flipclockjs.com/"> Bootstrap </a><br>
-        <a href="http://getbootstrap.com/"> FlipClock.js </a><br>
-        Thanks to all of those who contributed!
-      </p>
-
-
-  <div ng-show="currentPage == 1" ng-controller="ContentController as content">
-    <div ng-show="content.test">
-      Hello World
-    </div>
-    {{2 + 2}}
-    {{content.test}}
-  </div>
-
+	<!-- Nescessary for bootstrap -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
