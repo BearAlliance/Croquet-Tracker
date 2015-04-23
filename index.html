@@ -41,7 +41,7 @@
 	        <li class="dropdown">
 	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
 	          <ul class="dropdown-menu" role="menu">
-	            <li><a href="#">Action</a></li>
+	            <li><a href="#/signin">signin</a></li>
 	            <li><a href="#">Another action</a></li>
 	            <li><a href="#">Something else here</a></li>
 	            <li class="divider"></li>
@@ -54,7 +54,7 @@
 	      
 	    	<ul class="nav navbar-nav navbar-right">
 		      	<li><!-- Sign In -->
-		        <form action="login.php" method="post" class="navbar-form navbar-right">
+		        <form ng-submit="signIn()" method="post" class="navbar-form navbar-right">
 		            <div class="form-group">
 		              <input type="text" placeholder="Username" name="username" class="form-control" >
 		            </div>

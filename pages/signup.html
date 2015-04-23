@@ -3,15 +3,11 @@
 
     <!-- Messages, error or otherwise -->
     <div class="alert alert-danger" role="alert" ng-show="errors">
-        Oops, did you forget to put in your username or email? {{errors}}
+        {{message}}
     </div>
 
-    <div class="alert alert-danger" role="alert" ng-show="errorMessage">
-        {{errorMessage}}
-    </div>
-
-    <div class="alert alert-success" role="alert" ng-show="message">
-        Account sucessfully created! <a href="#" class="alert-link">Go to your account</a>
+    <div class="alert alert-success" role="alert" ng-show="success">
+        {{ message }} <a href="#/signin" class="alert-link">Sign In</a>
     </div>
     <form id="signupForm" ng-submit="processForm()" class="form-horizontal" role="form" name="signupForm" novalidate>
 
@@ -28,20 +24,15 @@
         </div>
         <div class="form-group">
             <label for="password">Password:</label>
-                <input type="text" class="form-control" name="password" id="password" placeholder="Enter Password" ng-model="formData.password"/>
-                <span style="color:red" ng-show="signupForm.password != signupForm.password2">Passwords do not match</span>
+                <input type="text" class="form-control" name="password" id="password" placeholder="Enter Password" ng-model="formData.password" ng-change="comparePassword()"/>
         </div>
         <div class="form-group">
             <label for="password">Password:</label>
-                <input type="text" class="form-control" name="formData.password2" id="password2 " placeholder="Re-enter Password" ng-model="formData.password2"/>
+                <input type="text" class="form-control" name="formData.password2" id="password2 " placeholder="Re-enter Password" ng-model="formData.password2" ng-change="comparePassword()"/>
+                <span style="color:red" ng-hide="passMatch">Passwords do not match</span>
         </div>
         <div class="form-group">
                 <button type="submit" class="btn btn-success">Sign Up!</button>
         </div>
     </form>
-    <p> {{ formData }} </p>
-    <p> {{ username }} </p>
-    <p> {{ email }} </p>
-
-    <p> {{ test }} </p>
 </div>  <!-- /container, ng-controller -->

@@ -30,6 +30,18 @@ ctrack.config(function($stateProvider, $urlRouterProvider) {
         	templateUrl: 'pages/contact.html'
         })
 
+        // ACCOUNT PAGE =======================================================
+        .state('account', {
+            url: '/account',
+            templateUrl: 'pages/account.html'
+        })
+
+        // SIGN IN  ===========================================================
+        .state('signin', {
+            url: '/signin',
+            templateUrl: 'pages/signin.html'
+        })
+
         ;
         
 });
@@ -39,7 +51,19 @@ ctrack.controller('signupCtrl', function($scope, $http) {
     // create a blank object to hold our form information
     // $scope will allow this to pass between controller and view
     $scope.formData = {};
-    // process the form
+
+    // True if the passwords match
+    $scope.passMatch = true;
+
+    // Returns false if the passwords do not match
+    $scope.comparePassword = function() {
+        if ($scope.formData.password != $scope.formData.password2) {
+            $scope.passMatch = false
+        }
+        else {
+            $scope.passMatch = true;
+        }
+    };
     $scope.processForm = function() {
         $http({
             method  : 'POST',
@@ -52,48 +76,43 @@ ctrack.controller('signupCtrl', function($scope, $http) {
                 $scope.test = data.test;
                 if (!data.success) {
                     // if not successful, bind errors to error variables
-                    $scope.errorName = data.errors.name;
+                    //$scope.errorName = data.errors.name;
                     $scope.errors = data.errors;
-                    $scope.message = null;
+                    $scope.message = data.message;
+                    $scope.success = false;
                 } 
                 else {
                     // if successful, bind success message to message
                     $scope.message = data.message;
-                    $scope.errorName = '';
                     $scope.errors = null;
+                    $scope.success = true;
                 }
             });
     };
 });
-// ctrack.controller('signupCtrl', function($scope, $http) {
 
-//     $scope.formData = {};
+ctrack.controller('signinCtrl', function($scope, $http) {
+    $scope.formData = {};
 
-//     // Processs signup form
-//     $scope.processForm = function() {
-//         $http({
-//         method  : 'POST',
-//         url     : 'server/signup.php', // Pass the data as strings
-//         data    : $.param($scope.formData),
-//         })
-//          .success(function(data)) {
-//           console.log(data);
+    $scope.signIn = function() {
+        $http({
+            method  : 'POST',
+            url     : 'server/signup.php',
+            data    : $.param($scope.formData),
+            headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+            .success(function(data) {
+                console.log(data);
+                $scope.test = data.test;
+                if (data.success) {
 
-//           if (!data.success) {
-//             // If not successful, bind erros to error variables
-//             $scope.errorName = data.errors.name;
-//           }
-//           else {
-//             // If successful, bind success message to message
-//             $scope.message = data.message;
-//           }
-//          }
-//     }
+                }
+            })
+    };
+});
 
-//     $scope.reset = function() {
-//         $scope.username = "";
-//         $scope.email = "";
-//         $scope.password = "";
-//         $scope.password2 = "";
-//     }
-// });
+ctrack.controller('navCtrl', function($scope, $http) {
+    $scope.formData = {};
+
+
+})
