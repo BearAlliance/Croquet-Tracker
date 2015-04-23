@@ -1,0 +1,38 @@
+<div class="container" ng-controller="signupCtrl as signup">
+    <h2>Sign up</h2>
+
+    <!-- Messages, error or otherwise -->
+    <div class="alert alert-danger" role="alert" ng-show="errors">
+        {{message}}
+    </div>
+
+    <div class="alert alert-success" role="alert" ng-show="success">
+        {{ message }} <a href="#/signin" class="alert-link">Sign In</a>
+    </div>
+    <form id="signupForm" ng-submit="processForm()" class="form-horizontal" role="form" name="signupForm" novalidate>
+
+        <div class="form-group">
+            <label for="username">Username:</label>
+                <input type="text" class="form-control" name="username" id="username" placeholder="Enter Desired Username" ng-model="formData.username" required />
+                <span style="color:red" ng-show="signupForm.username.$touched && signupForm.username.$error.required">Username is required</span>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+                <input type="text" class="form-control" name="email" id="email" ng-model="formData.email" required/>
+                <span style="color:red" ng-show="signupForm.email.$touched && signupForm.email.$error.required">Email address is required</span>
+                <span style="color:red" ng-show="signupForm.email.$dirty && signupForm.email.$touched && signupForm.email.$error.email">Invaled Email Address</span>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+                <input type="text" class="form-control" name="password" id="password" placeholder="Enter Password" ng-model="formData.password" ng-change="comparePassword()"/>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+                <input type="text" class="form-control" name="formData.password2" id="password2 " placeholder="Re-enter Password" ng-model="formData.password2" ng-change="comparePassword()"/>
+                <span style="color:red" ng-hide="passMatch">Passwords do not match</span>
+        </div>
+        <div class="form-group">
+                <button type="submit" class="btn btn-success">Sign Up!</button>
+        </div>
+    </form>
+</div>  <!-- /container, ng-controller -->
