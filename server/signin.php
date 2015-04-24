@@ -1,8 +1,8 @@
 <?php
 include 'common/base.php';
 
-$data		= array();	// Array to pass back results
-$data['success'] = false;
+$data				= array();	// Array to pass back results
+$data['success'] 	= false; 	// Default success state
 
 // Check for empty fields
 // Inserts error message into $data if there are
@@ -19,26 +19,36 @@ else {
 	$password = $_POST['password'];
 }
 // If there were no empty fields
-if (empty($data)) {
+if (!$data['message']) {
+	// Attempt to find the user in the database
 	$signInQuery = "SELECT `username`, `password` FROM `users` WHERE `username` = '$username'";
-	if ($result = mysqli_query($conn, $SignInQuery)) {
-		if (mysqli_num_rows($result) < 1) {
-			$data['success'] = false;
-			$data['message'] = "Username not found";
-		}
-		else {
+	if ($result = mysqli_query($conn, $signInQuery)) {
+		// If the user is found
+		if (mysqli_num_rows($result) > 0) {
 			$user = mysqli_fetch_object($result);
-			if ($user->username == $username && $user->password == $password) {
+			// Check if the username and password match
+			if ($user->username === $username && $user->password === $password) {
 				$data['success'] = true;
-				$_SESSION['user'] = $user->userid;
+				$data['message'] = "Successfully logged in!";
+				session_start();
+				$_SESSION['userId'] = $user->userid;
 			}
+			// Incorrect Password
+			else {
+				$data['message'] = "Username and Password don't match";
+			}
+		}
+		// If the username is not found
+		else {
+			$data['message'] = "Username not found";
 		}
 	}
 	else {
-		$data['success'] = false;
+
 		$data['message'] = "Error talking to database";
 	}
 
 }
 // Return $data back to http
+//$data['success'] = true;
 echo json_encode($data);

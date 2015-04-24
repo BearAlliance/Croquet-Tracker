@@ -46,6 +46,21 @@ ctrack.config(function($stateProvider, $urlRouterProvider) {
         
 });
 
+// Shared authentication
+ctrack.service('auth', function() {
+    var loggedIn = false;
+
+    return {
+        getLoggedIn: function() {
+            return loggedIn;
+        },
+        setLoggedIn: function(value) {
+            loggedIn = value;
+        }
+    }
+});
+
+
 // Signup Page
 ctrack.controller('signupCtrl', function($scope, $http) {
     // create a blank object to hold our form information
@@ -64,6 +79,17 @@ ctrack.controller('signupCtrl', function($scope, $http) {
             $scope.passMatch = true;
         }
     };
+
+    // Form validation
+    // $scope.badForm = function() {
+    //     if ($scope.formData.username = "") {
+    //         return true;
+    //     }
+    //     else {
+    //         return false;
+    //     }
+    // };
+
     $scope.processForm = function() {
         $http({
             method  : 'POST',
@@ -91,28 +117,58 @@ ctrack.controller('signupCtrl', function($scope, $http) {
     };
 });
 
-ctrack.controller('signinCtrl', function($scope, $http) {
-    $scope.formData = {};
+// Sign in page
+ctrack.controller('signinCtrl', function($scope, $http, auth) {
+    $scope.credentials = {};
 
-    $scope.signIn = function() {
+    $scope.signIn = function(credentials) {
         $http({
             method  : 'POST',
-            url     : 'server/signup.php',
-            data    : $.param($scope.formData),
+            url     : 'server/signin.php',
+            data    : $.param($scope.credentials),
             headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
         })
             .success(function(data) {
                 console.log(data);
-                $scope.test = data.test;
+                $scope.message = data.message;
+                $scope.submit = true;
                 if (data.success) {
-
+                    $scope.success = true;
+                    auth.setLoggedIn(true);
+                }
+                else {
+                    $scope.error = true;
                 }
             })
     };
 });
 
-ctrack.controller('navCtrl', function($scope, $http) {
-    $scope.formData = {};
+// Navigation Menu
+ctrack.controller('navCtrl', function($scope, $http, AuthService) {
+    $scope.credentials = {};
 
+    $scope.isLoggedIn = function() {
+        return auth.getLoggedIn();
+    };
 
+    $scope.signIn = function() {
+        $http({
+            method  : 'POST',
+            url     : 'server/signin.php',
+            data    : $.param($scope.formData),
+            headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+            .success(function(data) {
+                console.log(data);
+                $scope.message = data.message;
+                $scope.submit = true;
+                if (data.success) {
+                    $scope.success = true;
+                    auth.setLoggedIn(true);
+                }
+                else {
+                    $scope.error = true;
+                }
+            })
+    };
 })

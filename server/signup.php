@@ -4,25 +4,40 @@ include 'common/base.php';
 $errors         = array();  	// array to hold validation errors
 $data 			= array(); 		// array to pass back data
 	// validate the variables ======================================================
-	if (empty($_POST['username'])) {
-		$errors['name'] = 'Name is required.';
+	// Empty password
+	if (empty($_POST['password']) || $_POST['password'] == "") {
+		$errors['password'] = 'Password is required';
+		$data['message'] = 'Password is required';
 	}
 	else {
-		$username = $_POST['username'];
+		$password = $_POST['password'];
+	}	
+	// Non-matching password
+	if ($password != $_POST['password2']) {
+		$errors['password'] = 'Passwords do not match';
+		$data['message'] = 'Passwords do not match';
 	}
+	// Empty email
 	if (empty($_POST['email'])) {
-		$errors['email'] = 'Email is required.';
+		$errors['email'] = 'Email is required';
+		$data['message'] = 'Email is required';
 	}
 	else {
 		$email = $_POST['email'];
 	}
-	$password = $_POST['password'];
+	// Empty username
+	if (empty($_POST['username'])) {
+		$errors['name'] = 'Username is required';
+		$data['message'] = 'Username is required';
+	}
+	else {
+		$username = $_POST['username'];
+	}
 
 	// Response if there are empty fields
 	if ( ! empty($errors['email']) || ! empty($errors['username'])) {
 		// if there are items in the errors array, return those errors
 		$data['success'] = false;
-		$data['message'] = "Did you forget to enter your username or email?";
 	} 
 	else {
 		$userExists = existingUser($conn, $username);
@@ -40,7 +55,7 @@ $data 			= array(); 		// array to pass back data
 		else if (!$userExists && !$emailExists) {
 			if (insertUser($conn, $username, $email, $password)) {
 				$data['success'] = true;
-			$data['message'] = "Account sucessfully created!";
+				$data['message'] = "Account sucessfully created!";
 			}
 			else {
 				$data['success'] = false;
@@ -91,5 +106,5 @@ function insertUser($conn, $username, $email, $password)
 	if (mysqli_query($conn, $newUserQuery)) {
 		return true;
 	}
-		return false;
+	return false;
 }

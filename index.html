@@ -54,7 +54,7 @@
 	      
 	    	<ul class="nav navbar-nav navbar-right">
 		      	<li><!-- Sign In -->
-		        <form ng-submit="signIn()" method="post" class="navbar-form navbar-right">
+		        <form ng-submit="signIn()" ng-hide="isLoggedIn()" method="post" class="navbar-form navbar-right">
 		            <div class="form-group">
 		              <input type="text" placeholder="Username" name="username" class="form-control" >
 		            </div>
@@ -65,7 +65,10 @@
 		        </form>
 		        </li>
 		        <li>
-		        <a href="#/signup"><button class="btn btn-success">Sign Up</button></a>
+		        	<a href="#/signup"><button class="btn btn-success">Sign Up</button></a>
+		        </li>
+		        <li ng-show="isLoggedIn()">
+		        	<a href="#/home"><button class="btn btn-default">Sign out</button></a>
 		        </li>
 	    	</ul>
 	    </div><!-- /.navbar-collapse -->
