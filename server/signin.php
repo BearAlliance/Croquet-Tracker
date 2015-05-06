@@ -21,7 +21,7 @@ else {
 // If there were no empty fields
 if (!$data['message']) {
 	// Attempt to find the user in the database
-	$signInQuery = "SELECT `username`, `password` FROM `users` WHERE `username` = '$username'";
+	$signInQuery = "SELECT `username`, `password`, `userid` FROM `users` WHERE `username` = '$username'";
 	if ($result = mysqli_query($conn, $signInQuery)) {
 		// If the user is found
 		if (mysqli_num_rows($result) > 0) {
@@ -30,8 +30,11 @@ if (!$data['message']) {
 			if ($user->username === $username && $user->password === $password) {
 				$data['success'] = true;
 				$data['message'] = "Successfully logged in!";
+				$data['username'] = $user->username;
+				$data['userid'] = $user->userid;
 				session_start();
 				$_SESSION['userId'] = $user->userid;
+				$_SESSION['username'] = $username;
 			}
 			// Incorrect Password
 			else {
@@ -44,10 +47,8 @@ if (!$data['message']) {
 		}
 	}
 	else {
-
 		$data['message'] = "Error talking to database";
 	}
-
 }
 // Return $data back to http
 //$data['success'] = true;

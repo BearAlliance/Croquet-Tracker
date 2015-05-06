@@ -54,20 +54,12 @@
 	      
 	    	<ul class="nav navbar-nav navbar-right">
 		      	<li><!-- Sign In -->
-		        <form ng-submit="signIn()" ng-hide="isLoggedIn()" method="post" class="navbar-form navbar-right">
-		            <div class="form-group">
-		              <input type="text" placeholder="Username" name="username" class="form-control" >
-		            </div>
-		            <div class="form-group">
-		              <input type="password" placeholder="Password" name="password" class="form-control">
-		            </div>
-		            <button type="submit" class="btn btn-primary navbar-btn">Sign In</button>
-		        </form>
-		        </li>
-		        <li>
+		      		<a href="#/signin"><button class="btn btn-primary">Sign In</button></a>
+		      	</li>
+		      	<li>
 		        	<a href="#/signup"><button class="btn btn-success">Sign Up</button></a>
 		        </li>
-		        <li ng-show="isLoggedIn()">
+		        <li ng-show="">
 		        	<a href="#/home"><button class="btn btn-default">Sign out</button></a>
 		        </li>
 	    	</ul>
@@ -77,6 +69,13 @@
 
 	<!-- Injected Views -->
 	<div ui-view></div>
+
+	<!-- Footer -->
+	<footer class="footer">
+      <div class="container">
+        <p class="text-muted">&copy; 2015 Nick Cacace</p>
+      </div>
+    </footer>
 
 	<!-- Nescessary for bootstrap -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
