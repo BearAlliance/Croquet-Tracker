@@ -1,3 +1,24 @@
 <div class="container" ng-controller="accountCtrl as account">
-	
+	<!-- Not logged in -->
+	<div class="jumbotron" ng-hide="isLoggedIn()">
+		<div class="container">
+			<h1> Unauthorized </h1>
+			<p> Please 
+			<a href="#/login">
+				<button class="btn btn-primary">
+					Sign In
+				</button>
+			</a>
+			</p>
+		</div>
+	</div>
+
+	<!-- Logged in -->
+	<div ng-show="isLoggedIn()">
+		<div class="container">
+			<h1> My Account </h1>
+			<button class="btn btn-primary">Change Password </button>
+			<button class="btn btn-danger">Delete Account </button>
+		</div>
+	</div>
 </div>

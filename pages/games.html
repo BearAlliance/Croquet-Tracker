@@ -1,0 +1,38 @@
+<div ng-controller="gamesCtrl as games">
+	<!-- Not logged in -->
+	<div class="jumbotron" ng-hide="isLoggedIn()">
+		<div class="container">
+			<h1> Unauthorized </h1>
+			<p> Please 
+			<a href="#/login">
+				<button class="btn btn-primary">
+					Sign In
+				</button>
+			</a>
+			</p>
+		</div>
+	</div>
+
+	<!-- Logged in -->
+	<div class="container" ng-show="isLoggedIn()">
+		<h1> Games Overview </h1>
+		<h2> {{ message }} </h2>
+		<!-- Errors -->
+		<div class="alert alert-danger" role="alert" ng-show="error">
+			<h2> {{ message }} </h2>
+		</div>
+
+		<a href="#/game">
+			<button class="btn btn-success"> New Game </button>
+		</a>
+		<button class="btn btn-primary" ng-click="getGames()"> Refresh </button>
+
+
+		  <table class="table">
+		  	<tr ng-repeat="game in games">  
+		  		<td> Test1 </td>
+		  		<td> Test 11 </td>
+		  	</tr>
+		  </table>
+	</div>
+</div>

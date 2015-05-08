@@ -2,12 +2,14 @@
 	
 	<div class="col-md-4"></div>
 	<div class="well col-md-4">
-		<p> {{ isLoggedIn() }} </p>
+
 		<div class="alert alert-success" role="alert" ng-show="success">
 			{{ message }}
-			<a href="#/games"> Go to game view </a>
+			<p>
+				<a href="#/games"> Go to games overview </a>
+			</p>
 		</div>
-		<div class="alert alert-danger"role="alert" ng-show="error">
+		<div class="alert alert-danger" role="alert" ng-show="error">
 			{{ message }} 
 		</div>
 		<h1> Sign In </h1>

@@ -3,7 +3,7 @@ include 'common/base.php';
 
 $data				= array();	// Array to pass back results
 $data['success'] 	= false; 	// Default success state
-
+session_start();
 // Check for empty fields
 // Inserts error message into $data if there are
 if (empty($_POST['username'])) {
@@ -32,7 +32,6 @@ if (!$data['message']) {
 				$data['message'] = "Successfully logged in!";
 				$data['username'] = $user->username;
 				$data['userid'] = $user->userid;
-				session_start();
 				$_SESSION['userId'] = $user->userid;
 				$_SESSION['username'] = $username;
 			}
@@ -52,4 +51,5 @@ if (!$data['message']) {
 }
 // Return $data back to http
 //$data['success'] = true;
+include 'common/close.php';
 echo json_encode($data);

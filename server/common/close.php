@@ -1,5 +1,4 @@
 <?php
 
-msqli_close($conn);
+mysqli_close($conn);
 
-?>

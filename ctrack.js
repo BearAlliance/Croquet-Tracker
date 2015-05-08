@@ -9,50 +9,36 @@ ctrack.config(function($stateProvider, $urlRouterProvider) {
         // HOME STATES AND NESTED VIEWS ========================================
         .state('home', {
             url: '/home',
-            templateUrl: 'pages/splash.html',
-            data: {
-                requireLogin: false
-            }
+            templateUrl: 'pages/home.html'
         })
         
         // ABOUT PAGE ==========================================================
         .state('about', {
         	url: '/about',
-        	templateUrl: 'pages/about.html',   
-            data: {
-                requireLogin: false
-            }  
+        	templateUrl: 'pages/about.html'  
         })
 
         // SIGNUP FORM =========================================================
         .state('signup', {
         	url: '/signup',
-        	templateUrl: 'pages/signup.html',
-            data: {
-                requireLogin: false
-            }
+        	templateUrl: 'pages/signup.html'
         })
 
         // CONTACT PAGE =======================================================
         .state('contact', {
         	url: '/contact',
-        	templateUrl: 'pages/contact.html',
-            data: {
-                requireLogin: false
-            }
+        	templateUrl: 'pages/contact.html'
         })
 
         // App ================================================================
         .state('app', {
             url: '/app',
-            templateUrl: 'pages/app.html',
-            data: {
-                requireLogin: true
-            }
+            templateUrl: 'pages/app.html'
+
         })
 
         // ACCOUNT PAGE =======================================================
-        .state('app.account', {
+        .state('account', {
             url: '/account',
             templateUrl: 'pages/account.html'
         })
@@ -60,121 +46,169 @@ ctrack.config(function($stateProvider, $urlRouterProvider) {
         // SIGN IN  ===========================================================
         .state('signin', {
             url: '/signin',
-            templateUrl: 'pages/signin.html',
-            data: {
-                requireLogin: false
-            }
+            templateUrl: 'pages/signin.html'
+        })
+
+        // GAMES OVERVIEW =====================================================
+        .state('games', {
+            url: '/games',
+            templateUrl: 'pages/games.html'
+        })
+
+        // GAME VIEW ==========================================================
+        .state('game', {
+            url: '/game',
+            templateUrl: 'pages/game.html'
         })
 
         ;
         
 });
 
-ctrack.run(function ($rootScope) {
 
-  $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
-    var requireLogin = toState.data.requireLogin;
+//Shared authentication
+ctrack.service('auth', function auth($rootScope) {
+    var auth = this;
 
-    if (requireLogin && typeof $rootScope.currentUser === 'undefined') {
-      event.preventDefault();
+    this.loggedIn = false;
+    this.username = "";
+    $rootScope.authenticated = false;
 
-      loginModal()
-        .then(function () {
-          return $state.go(toState.name, toParams);
+    this.getUser = function($rootScope) {
+        return this.username;
+    };
+
+    this.isLoggedIn = function() {
+        return this.loggedIn;
+    };
+
+    this.logIn = function(username, userid, $rootScope) {
+        console.log("auth login " + username);
+        this.loggedIn = true;
+        this.username = username;
+        $rootScope.currentUser = userid;
+        $rootScope.currentUsername = username;
+        $rootScope.authenticated = true;
+
+    };
+
+    auth.logOut = function() {
+        console.log("auth logout");
+        auth.loggedIn = false;
+        $rootScope.currentUser = "";
+        $rootScope.currentUsername = "";
+        $rootScope.authenticated = "";
+        return;
+    };
+
+    auth.signOut = function() {
+        $http({
+                method  : 'POST',
+                url     : 'server/signOut.php',
+                data    : $.param(),
+                headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+            })
+                .success(function() {
+                    console.log("Signed Out");
+                    auth.logOut();
+                })
+    };
+});
+
+// Home page
+ctrack.controller('homeCtrl', function($scope, auth) {
+    $scope.isLoggedIn = function() {
+        return auth.isLoggedIn();
+    };
+});
+
+// Games overview
+ctrack.controller('gameCtrl', function($scope, $http, auth) {
+    $scope.isLoggedIn = function() {
+        return auth.isLoggedIn();
+    };
+
+    $scope.getUser = function() {
+        return auth.getUser();
+    };
+    $scope.gameData = {};
+    $scope.gameData.p1Score = 0;
+    $scope.gameData.p2Score = 0;
+    $scope.gameData.player2 = "";
+
+    $scope.addp1 = function(){
+        $scope.gameData.p1Score++;
+    };
+
+    $scope.subp1 = function(){
+        $scope.gameData.p1Score--;
+        if ($scope.gameData.p1Score <= 0) {
+            $scope.gameData.p1Score = 0;
+        }
+    };
+
+    $scope.addp2 = function(){
+        $scope.gameData.p2Score++;
+    };
+
+    $scope.subp2 = function(){
+        $scope.gameData.p2Score--;
+        if ($scope.gameData.p2Score <= 0) {
+            $scope.gameData.p2Score = 0;
+        }
+    };
+
+    $scope.save = function(gameData) {
+        //data = {$scope.p1Score, $scope.p2Score, $scope.player2};
+        $http({
+            method  : 'POST',
+            url     : 'server/saveGame.php',
+            data    : $.param($scope.gameData),
+            headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
         })
-        .catch(function () {
-          return $state.go('welcome');
-        });
-    }
-  });
-
+            .success(function(response) {
+                console.log(response);
+                $scope.message = response.message;
+                if (response.success) {
+                    $scope.success = true;
+                }
+                else {
+                    $scope.error = true;
+                }
+            })
+    };
 });
 
-// // Rejected auth requests
-// app.config(function ($httpProvider) {
+// Game view
+ctrack.controller('gamesCtrl', function($scope, $http, auth) {
+    $scope.isLoggedIn = function() {
+        return auth.isLoggedIn();
+    };
 
-//   $httpProvider.interceptors.push(function ($timeout, $q, $injector) {
-//     var loginModal, $http, $state;
-
-//     // this trick must be done so that we don't receive
-//     // `Uncaught Error: [$injector:cdep] Circular dependency found`
-//     $timeout(function () {
-//       loginModal = $injector.get('loginModal');
-//       $http = $injector.get('$http');
-//       $state = $injector.get('$state');
-//     });
-
-//     return {
-//       responseError: function (rejection) {
-//         if (rejection.status !== 401) {
-//           return rejection;
-//         }
-
-//         var deferred = $q.defer();
-
-//         loginModal()
-//           .then(function () {
-//             deferred.resolve( $http(rejection.config) );
-//           })
-//           .catch(function () {
-//             $state.go('welcome');
-//             deferred.reject(rejection);
-//           });
-
-//         return deferred.promise;
-//       }
-//     };
-//   });
-
-// });
-
-ctrack.service('loginModal', function ($modal, $rootScope) {
-
-  function assignCurrentUser (user) {
-    $rootScope.currentUser = user;
-    return user;
-  }
-
-  return function() {
-    var instance = $modal.open({
-      templateUrl: 'views/loginModalTemplate.html',
-      controller: 'LoginModalCtrl',
-      controllerAs: 'LoginModalCtrl'
-    })
-
-    return instance.result.then(assignCurrentUser);
-  };
-
-});
-
-ctrack.controller('LoginModalCtrl', function ($scope, UsersApi) {
-
-  this.cancel = $scope.$dismiss;
-
-  this.submit = function (email, password) {
-    UsersApi.login(email, password).then(function (user) {
-      $scope.$close(user);
-    });
-  };
-
-});
-
-// //Shared authentication
-// ctrack.service('auth', function() {
-//     var loggedIn;
-
-//     return {
-//         getLoggedIn: function() {
-//             return loggedIn;
-//         },
-//         setLoggedIn: function(value) {
-//             loggedIn = value;
-//         }
-//     }
-
-
-// });
-
+    $scope.getGames = function() {
+        $http({
+            method  : 'POST',
+            url     : 'server/games.php',
+            data    : $.param(true),
+            headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+            .success(function(response) {
+                console.log(response);
+                console.log("ajax success");
+                $scope.message = response.message;
+                console.log(response.message);
+                if (response.success) {
+                    $scope.success = true;
+                    $scope.error = false;
+                    $scope.games = response.games;
+                }
+                else {
+                    $scope.error = true;
+                    $scope.success = false;
+                }
+            })
+    };
+})
 
 // Signup Page
 ctrack.controller('signupCtrl', function($scope, $http) {
@@ -233,8 +267,14 @@ ctrack.controller('signupCtrl', function($scope, $http) {
 });
 
 // Sign in page
-ctrack.controller('signinCtrl', function($scope, $http) {
+ctrack.controller('signinCtrl', function($scope, $http, $rootScope, auth) {
+    var signIn = this;
+
     $scope.credentials = {};
+
+    $scope.isLoggedIn = function() {
+        return auth.isLoggedIn()
+    };
 
     $scope.signIn = function(credentials) {
         $http({
@@ -249,43 +289,36 @@ ctrack.controller('signinCtrl', function($scope, $http) {
                 $scope.submit = true;
                 if (data.success) {
                     $scope.success = true;
-                    $rootScope['username'] = data.username;
-                    $rootScope['userid'] = data.userid;
+                    $scope.error = false;
+                    auth.logIn(data.username, data.userid, $rootScope);
                     //auth.setLoggedIn(true);
                 }
                 else {
                     $scope.error = true;
+                    $scope.success = false;
                 }
             })
     };
 });
 
 // Navigation Menu
-ctrack.controller('navCtrl', function($scope, $http, AuthService) {
-    $scope.credentials = {};
-
-    $scope.isLoggedIn = function() {
-        return auth.getLoggedIn();
+ctrack.controller('navCtrl', function($scope, auth) {
+    $scope.isLoggedIn = function(){
+        return auth.isLoggedIn();
     };
 
-    // $scope.signIn = function() {
-    //     $http({
-    //         method  : 'POST',
-    //         url     : 'server/signin.php',
-    //         data    : $.param($scope.formData),
-    //         headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
-    //     })
-    //         .success(function(data) {
-    //             console.log(data);
-    //             $scope.message = data.message;
-    //             $scope.submit = true;
-    //             if (data.success) {
-    //                 $scope.success = true;
-    //                 auth.setLoggedIn(true);
-    //             }
-    //             else {
-    //                 $scope.error = true;
-    //             }
-    //         })
-    // };
+    $scope.signOut = function() {
+        auth.logOut();
+    };
+
+    $scope.getUser = function() {
+        return auth.getUser();
+    };
+});
+
+// Account Page
+ctrack.controller('accountCtrl', function($scope, auth, $http) {
+    $scope.isLoggedIn = function() {
+        return auth.isLoggedIn();
+    };
 });

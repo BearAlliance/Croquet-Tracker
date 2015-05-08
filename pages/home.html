@@ -1,0 +1,26 @@
+
+<div ng-controller="homeCtrl as home">
+  <div class="jumbotron" ng-hide="isLoggedIn()">
+    <div class="container">
+      <h1>Hello!</h1>
+      <p>cTrack is an app that lets you keep track of your croquet game scores.</p>
+      <a href="#/signup">
+        <button type="button" class="btn btn-success">
+          Sign Up 
+        </button>
+      </a>
+    </div><!-- /container -->
+  </div>
+
+  <div class="jumbotron" ng-show="isLoggedIn()">
+    <div class="container">
+      <h1>Welcome to CTrack!</h1>
+      <p> The best service for keeping track of your croquet games </p>
+      <a href="#/games">
+        <button type="button" class="btn btn-primary">
+          Go to games overview
+        </button>
+      </a>
+      </div> <!-- /container -->
+  </div>
+</div> <!-- /homeCtrl -->

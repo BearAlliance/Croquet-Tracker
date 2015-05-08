@@ -1,0 +1,65 @@
+<div ng-controller="gameCtrl as game">
+	<div class="jumbotron" ng-show="!isLoggedIn()">
+		<div class="container">
+			<h1> Unauthorized </h1>
+			<p> Please 
+			<a href="#/login">
+				<button class="btn btn-primary">
+					Sign In
+				</button>
+			</a>
+			</p>
+		</div>
+	</div>
+
+	<div class="container" ng-show="isLoggedIn()">
+		<h1> Game view </h1>
+
+		<!-- Error Message -->
+		<div class="alert alert-danger" role="alert" ng-show="error">
+			<h4> {{ message }} </h2>
+		</div>
+		<!-- Success Message -->
+		<div class="alert alert-success" roler="alert" ng-show="success">
+			<h4> {{ message }} </h2>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-6">
+				<label> Player 1: </label> {{ getUser() }}
+			</div>
+
+			<div class="col-sm-6">
+				<div class="input-group">
+					<label> Player 2 </label>
+					<input type="text" class="form-control" ng-model="gameData.player2" placeholder="Player 2">
+				</div>
+			</div>
+			<br>
+		</div> <!-- /row -->
+
+		<div class="row">
+			<div class="col-sm-6">
+				<p><label> {{ getUser() }} Score: </label></p>
+				<p> {{ p1Score }} </p>
+				<p>
+				<button class="btn btn-success" ng-click="addp1()">+</button>
+				<button class="btn btn-danger" ng-click="subp1()">-</button>
+				</p>
+			</div>
+
+			<div class="col-sm-6">
+				<p> <label> {{ player2 }} Score:</label> </p>
+				<p> {{ p2Score }} </p>
+				<p>
+				<button class="btn btn-success" ng-click="addp2()">+</button>
+				<button class="btn btn-danger" ng-click="subp2()">-</button>
+				</p>
+			</div>
+		</div> <!-- /row -->
+
+	<!-- Save results -->
+	<br><br>
+	<button class="btn btn-primary" ng-click="save()">Save</button>
+	</div>
+</div>
