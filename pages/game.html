@@ -3,7 +3,7 @@
 		<div class="container">
 			<h1> Unauthorized </h1>
 			<p> Please 
-			<a href="#/login">
+			<a href="#/signin">
 				<button class="btn btn-primary">
 					Sign In
 				</button>
@@ -12,27 +12,28 @@
 		</div>
 	</div>
 
-	<div class="container" ng-show="isLoggedIn()">
+	<div class="container" ng-show="isLoggedIn()" ng-init="start()">
 		<h1> Game view </h1>
 
 		<!-- Error Message -->
 		<div class="alert alert-danger" role="alert" ng-show="error">
-			<h4> {{ message }} </h2>
+			<h4> Error saving game </h2>
 		</div>
 		<!-- Success Message -->
-		<div class="alert alert-success" roler="alert" ng-show="success">
-			<h4> {{ message }} </h2>
+		<div class="alert alert-success" role="alert" ng-show="success">
+			<h4> Game Saved! </h2>
+			<a href="#/games"> Back to Games Overview </a>
 		</div>
 
 		<div class="row">
 			<div class="col-sm-6">
-				<label> Player 1: </label> {{ getUser() }}
+				<label> You: </label> {{ getUser() }}
 			</div>
 
 			<div class="col-sm-6">
 				<div class="input-group">
-					<label> Player 2 </label>
-					<input type="text" class="form-control" ng-model="gameData.player2" placeholder="Player 2">
+					<label> Opponent </label>
+					<input type="text" class="form-control" ng-model="gameData.player2" placeholder="Opponent">
 				</div>
 			</div>
 			<br>
@@ -41,7 +42,7 @@
 		<div class="row">
 			<div class="col-sm-6">
 				<p><label> {{ getUser() }} Score: </label></p>
-				<p> {{ p1Score }} </p>
+				<p> {{ gameData.p1Score }} </p>
 				<p>
 				<button class="btn btn-success" ng-click="addp1()">+</button>
 				<button class="btn btn-danger" ng-click="subp1()">-</button>
@@ -49,8 +50,8 @@
 			</div>
 
 			<div class="col-sm-6">
-				<p> <label> {{ player2 }} Score:</label> </p>
-				<p> {{ p2Score }} </p>
+				<p> <label> {{ gameData.player2 }} Score:</label> </p>
+				<p> {{ gameData.p2Score }} </p>
 				<p>
 				<button class="btn btn-success" ng-click="addp2()">+</button>
 				<button class="btn btn-danger" ng-click="subp2()">-</button>
@@ -58,8 +59,9 @@
 			</div>
 		</div> <!-- /row -->
 
-	<!-- Save results -->
-	<br><br>
-	<button class="btn btn-primary" ng-click="save()">Save</button>
+		<!-- Save results -->
+		<br><br>
+		<button class="btn btn-primary" ng-click="save()">Save</button>
+		<a href="#/games"><button class="btn btn-default"> Return to Overview</button></a>
 	</div>
 </div>

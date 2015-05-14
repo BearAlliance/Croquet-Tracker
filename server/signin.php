@@ -32,8 +32,10 @@ if (!$data['message']) {
 				$data['message'] = "Successfully logged in!";
 				$data['username'] = $user->username;
 				$data['userid'] = $user->userid;
-				$_SESSION['userId'] = $user->userid;
-				$_SESSION['username'] = $username;
+				$_SESSION["userId"] = $user->userid;
+				$_SESSION["username"] = $username;
+				$test = "session working";
+				$_SESSION["test"] = $test;
 			}
 			// Incorrect Password
 			else {

@@ -17,8 +17,65 @@
 	<div ng-show="isLoggedIn()">
 		<div class="container">
 			<h1> My Account </h1>
-			<button class="btn btn-primary">Change Password </button>
-			<button class="btn btn-danger">Delete Account </button>
+			<h3> User: {{getUser()}} </h3>
+			<!-- Change Password -->
+			<p><button class="btn btn-primary" data-toggle="modal" data-target="#passwordModal">Change Password </button></p>
+			<!-- Delete Account -->
+			<p><button class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Delete Account </button></p>
 		</div>
-	</div>
+
+		<!-- Password Modal -->
+		<div class="modal fade" id="passwordModal" tabindex="-1" role="dialog" aria-labelledby="passwordChange" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title" id="myModalLabel">Change password</h4>
+			      </div>
+			      <div class="modal-body">
+			      	{{formData}}
+				      <div class="alert alert-danger" ng-show="error">
+				      	{{ message }}
+				      </div>
+				      <div class="alert alert-success" ng-show="success">
+				      {{ message }}
+				      </div>
+			        <form role="form" ng-submit="changePassword()" id="changePassword">
+			        	<div class="form-group">
+			        		<label for ="password">New Password:</label>
+			        			<input type="text" class="form-control" name="newPassword" placeholder="Enter new password" ng-model="formData.newPassword"/>
+			        	</div>
+			        	<div class ="form-group">
+			        		<label for="password2">Re-Enter New Password:</label>
+			        			<input type="text" class="form-control" name="newPassword2" placeholder="Re-enter Password" ng-model="formData.newPassword2"/>
+			        	</div>
+			        </form>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		        <button type="button" class="btn btn-primary" ng-click="changePassword()">Change Password</button>
+		      </div>
+		    </div>
+		  </div>
+		</div> <!-- /Password Modal -->
+
+		<!-- Delete Modal -->
+		<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteAccount" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title" id="myModalLabel">You're leaving?</h4>
+		      </div>
+		      <div class="modal-body">
+		        Are you sure you want to delete your account?
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+		        <button type="button" class="btn btn-primary">Yes</button>
+		      </div>
+		    </div>
+		  </div>
+		</div> <!-- /deleteModal -->
+	</div> <!-- /isLoggedIn() -->
 </div>

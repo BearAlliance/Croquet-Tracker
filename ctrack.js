@@ -67,11 +67,12 @@ ctrack.config(function($stateProvider, $urlRouterProvider) {
 
 
 //Shared authentication
-ctrack.service('auth', function auth($rootScope) {
+ctrack.service('auth', function auth($rootScope, $http) {
     var auth = this;
 
     this.loggedIn = false;
     this.username = "";
+    this.loginChecked = false;
     $rootScope.authenticated = false;
 
     this.getUser = function($rootScope) {
@@ -79,6 +80,10 @@ ctrack.service('auth', function auth($rootScope) {
     };
 
     this.isLoggedIn = function() {
+        if (!this.loginChecked) {
+            this.checkLogin();
+            this.loginChecked = true;
+        }
         return this.loggedIn;
     };
 
@@ -92,7 +97,7 @@ ctrack.service('auth', function auth($rootScope) {
 
     };
 
-    auth.logOut = function() {
+    this.logOut = function() {
         console.log("auth logout");
         auth.loggedIn = false;
         $rootScope.currentUser = "";
@@ -101,17 +106,32 @@ ctrack.service('auth', function auth($rootScope) {
         return;
     };
 
+
+    this.checkLogin = function() {
+        $http.get("server/checkLogin.php")
+        .success(function(data, status, headers, config) {
+            console.log(data);
+            if (data.success) {
+                auth.username = data.username;
+                auth.loggedIn = true;
+
+                $rootScope.authenticated = true;
+            }
+            else {
+                auth.loggedIn = false;
+                $rootScope.authenticated = false;
+            }
+        });
+    };
+
     auth.signOut = function() {
-        $http({
-                method  : 'POST',
-                url     : 'server/signOut.php',
-                data    : $.param(),
-                headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
-            })
-                .success(function() {
-                    console.log("Signed Out");
-                    auth.logOut();
-                })
+        $http.get("server/signOut.php")
+        .success(function(data) {
+            console.log("Signed out");
+            auth.loggedIn = false;
+            auth.loginChecked = false;
+            $rootScope.authenticated = false;
+        });
     };
 });
 
@@ -120,6 +140,10 @@ ctrack.controller('homeCtrl', function($scope, auth) {
     $scope.isLoggedIn = function() {
         return auth.isLoggedIn();
     };
+
+    $scope.loginTest = function() {
+        auth.checkLogin();
+    }
 });
 
 // Games overview
@@ -128,13 +152,17 @@ ctrack.controller('gameCtrl', function($scope, $http, auth) {
         return auth.isLoggedIn();
     };
 
+    $scope.start = function() {
+        $scope.gameData = {};
+        $scope.gameData.player1 = $scope.getUser();
+        $scope.gameData.p1Score = 0;
+        $scope.gameData.p2Score = 0;
+        $scope.gameData.player2 = "";
+    };
     $scope.getUser = function() {
         return auth.getUser();
     };
-    $scope.gameData = {};
-    $scope.gameData.p1Score = 0;
-    $scope.gameData.p2Score = 0;
-    $scope.gameData.player2 = "";
+    
 
     $scope.addp1 = function(){
         $scope.gameData.p1Score++;
@@ -158,11 +186,11 @@ ctrack.controller('gameCtrl', function($scope, $http, auth) {
         }
     };
 
-    $scope.save = function(gameData) {
+    $scope.save = function() {
         //data = {$scope.p1Score, $scope.p2Score, $scope.player2};
         $http({
             method  : 'POST',
-            url     : 'server/saveGame.php',
+            url     : 'server/newGame.php',
             data    : $.param($scope.gameData),
             headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
         })
@@ -171,36 +199,7 @@ ctrack.controller('gameCtrl', function($scope, $http, auth) {
                 $scope.message = response.message;
                 if (response.success) {
                     $scope.success = true;
-                }
-                else {
-                    $scope.error = true;
-                }
-            })
-    };
-});
-
-// Game view
-ctrack.controller('gamesCtrl', function($scope, $http, auth) {
-    $scope.isLoggedIn = function() {
-        return auth.isLoggedIn();
-    };
-
-    $scope.getGames = function() {
-        $http({
-            method  : 'POST',
-            url     : 'server/games.php',
-            data    : $.param(true),
-            headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
-        })
-            .success(function(response) {
-                console.log(response);
-                console.log("ajax success");
-                $scope.message = response.message;
-                console.log(response.message);
-                if (response.success) {
-                    $scope.success = true;
                     $scope.error = false;
-                    $scope.games = response.games;
                 }
                 else {
                     $scope.error = true;
@@ -208,7 +207,124 @@ ctrack.controller('gamesCtrl', function($scope, $http, auth) {
                 }
             })
     };
-})
+});
+
+// Games overview
+ctrack.controller('gamesCtrl', function($scope, $http, auth) {
+    $scope.isLoggedIn = function() {
+        return auth.isLoggedIn();
+    };
+
+    $scope.gameData = {};
+    $scope.games;
+
+    $scope.getGames = function() {
+        $http.get("server/games.php")
+        .success(function(data) {
+            console.log("games retrieved");
+            $scope.games = data;
+        });
+    };
+
+    $scope.edit = function(id) {
+        var gameLocation = GetObjectKeyIndex($scope.games, id);
+        if (auth.username == $scope.games[gameLocation].user1) {
+            $scope.gameData.p1Score = $scope.games[gameLocation].user1score;
+            $scope.gameData.p2Score = $scope.games[gameLocation].user2score;
+            $scope.gameData.player1 = $scope.games[gameLocation].user1;
+            $scope.gameData.player2 = $scope.games[gameLocation].user2;
+            $scope.gameData.reversed = false;
+        }
+        // if the user is not player 1 in the db
+        else {
+            $scope.gameData.p1Score = $scope.games[gameLocation].user2score;
+            $scope.gameData.p2Score = $scope.games[gameLocation].user1score;
+            $scope.gameData.player1 = $scope.games[gameLocation].user2;
+            $scope.gameData.player2 = $scope.games[gameLocation].user1;
+            $scope.gameData.reversed = true;
+        }
+        $scope.gameData.gameid = $scope.games[gameLocation].gameid;
+    };
+
+    $scope.saveChanges = function() {
+        if ($scope.gameData.reversed) {
+            var tempplayer1 = $scope.gameData.player1;
+            var tempplayer1score = $scope.gameData.p1Score;
+
+            $scope.gameData.player1 = $scope.gameData.player2;
+            $scope.gameData.player2 = tempplayer1;
+            $scope.gameData.p1Score = $scope.gameData.p2Score;
+            $scope.gameData.p2Score = tempplayer1score;
+        }
+
+        console.log($scope.gameData);
+        $http({
+            method  : 'POST',
+            url     : 'server/updateGame.php',
+            data    : $.param($scope.gameData),
+            headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+            .success(function(data) {
+                console.log(data);
+                if (data.success)
+                    $scope.success = true;
+            });
+        $scope.getGames();
+    };
+
+    $scope.getUser = function() {
+        return auth.getUser();
+    };
+
+    $scope.addp1 = function(){
+        $scope.gameData.p1Score++;
+    };
+
+    $scope.subp1 = function(){
+        $scope.gameData.p1Score--;
+        if ($scope.gameData.p1Score <= 0) {
+            $scope.gameData.p1Score = 0;
+        }
+    };
+
+    $scope.addp2 = function(){
+        $scope.gameData.p2Score++;
+    };
+
+    $scope.subp2 = function(){
+        $scope.gameData.p2Score--;
+        if ($scope.gameData.p2Score <= 0) {
+            $scope.gameData.p2Score = 0;
+        }
+    };
+
+    $scope.deleteGame = function(id) {
+        var data = {};
+        data['id'] = id;
+        $http({
+            method  : 'POST',
+            url     : 'server/deleteGame.php',
+            data    : $.param(data),
+            headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+            .success(function(data, status) {
+                console.log(data);
+                if (data.success)
+                    $scope.deleteSuccess = true;
+            });
+        $scope.getGames();
+    };
+
+    function GetObjectKeyIndex(obj, keyToFind) {
+        var i = 0, key;
+        for (key in obj) {
+            if(obj[i].gameid == keyToFind) {
+                return i;
+            }
+            i++;
+        }
+    };
+});
 
 // Signup Page
 ctrack.controller('signupCtrl', function($scope, $http) {
@@ -228,16 +344,6 @@ ctrack.controller('signupCtrl', function($scope, $http) {
             $scope.passMatch = true;
         }
     };
-
-    // Form validation
-    // $scope.badForm = function() {
-    //     if ($scope.formData.username = "") {
-    //         return true;
-    //     }
-    //     else {
-    //         return false;
-    //     }
-    // };
 
     $scope.processForm = function() {
         $http({
@@ -308,11 +414,15 @@ ctrack.controller('navCtrl', function($scope, auth) {
     };
 
     $scope.signOut = function() {
-        auth.logOut();
+        auth.signOut();
     };
 
     $scope.getUser = function() {
         return auth.getUser();
+    };
+
+    $scope.checkLogin = function() {
+        auth.checkLogin();
     };
 });
 
@@ -320,5 +430,34 @@ ctrack.controller('navCtrl', function($scope, auth) {
 ctrack.controller('accountCtrl', function($scope, auth, $http) {
     $scope.isLoggedIn = function() {
         return auth.isLoggedIn();
+    };
+
+    $scope.getUser = function() {
+        return auth.getUser();
+    };
+
+    $scope.formData = {};
+    $scope.formData.newPassword;
+    $scope.formData.newPassword2;
+
+    $scope.changePassword = function() {
+        $http({
+            method  : 'POST',
+            url     : 'server/changePassword.php',
+            data    : $.param($scope.formData),
+            headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+            .success(function(data) {
+                console.log(data);
+                $scope.message = data.message;
+                if (data.success) {
+                    $scope.success = true;
+                    $scope.error = false;
+                }
+                else {
+                    $scope.error = true;
+                    $scope.success = false;
+                }
+            })
     };
 });

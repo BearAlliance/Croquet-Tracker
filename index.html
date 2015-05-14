@@ -7,7 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
   	<title>cTrack</title>
 	<!-- Bootstrap -->
-  	<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+  	<link href="css/bootstrap.css" rel="stylesheet">
 
   	<!-- Angular.js -->
 	<script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
@@ -20,7 +20,7 @@
 
 <body>
 	<nav class="navbar navbar-default" ng-controller="navCtrl as nav">
-	  <div class="container-fluid">
+	  <div class="container-fluid" ng-init="checkLogin()">
 	    <!-- Brand and toggle get grouped for better mobile display -->
 	    <div class="navbar-header">
 	      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">

@@ -11,8 +11,11 @@
         <div class="alert alert-success" role="alert" ng-show="success">
             {{ message }} <a href="#/signin" class="alert-link">Sign In</a>
         </div>
-        <form id="signupForm" ng-submit="processForm()" class="form-horizontal" role="form" name="signupForm" novalidate>
+        <div class="alert alert-danger" role="alert">
+            <p> Note: This project is currently in beta, the information you enter here may not be secure. For your safety, we ask that you use a username and password that you do not use for any other service. </p>
+        </div>
 
+        <form id="signupForm" ng-submit="processForm()" class="form-horizontal" role="form" name="signupForm" novalidate>
             <div class="form-group">
                 <label for="username">Username:</label>
                     <input type="text" class="form-control" name="username" id="username" placeholder="Enter Desired Username" ng-model="formData.username" ng-change="badForm()" required />

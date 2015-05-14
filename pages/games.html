@@ -14,12 +14,11 @@
 	</div>
 
 	<!-- Logged in -->
-	<div class="container" ng-show="isLoggedIn()">
+	<div class="container" ng-show="isLoggedIn()" ng-init="getGames()">
 		<h1> Games Overview </h1>
-		<h2> {{ message }} </h2>
 		<!-- Errors -->
-		<div class="alert alert-danger" role="alert" ng-show="error">
-			<h2> {{ message }} </h2>
+		<div class="alert alert-success" role="alert" ng-show="updateSuccess">
+			Game data updated.
 		</div>
 
 		<a href="#/game">
@@ -27,11 +26,81 @@
 		</a>
 		<button class="btn btn-primary" ng-click="getGames()"> Refresh </button>
 
+		<br><br>
+
+		<!-- Edit Modal -->
+			<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			  <div class="modal-dialog">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        <h4 class="modal-title" id="myModalLabel">Edit Game</h4>
+			      </div>
+			      <div class="modal-body">
+			        <div class="row">
+						<div class="col-sm-6">
+							<label> Player 1: </label> {{ gameData.player1 }}
+						</div>
+
+						<div class="col-sm-6">
+							<div class="input-group">
+								<label> Opponent </label>
+								<input type="text" class="form-control" ng-model="gameData.player2" placeholder="Opponent">
+							</div>
+						</div>
+						<br>
+					</div> <!-- /row -->
+
+					<div class="row">
+						<div class="col-sm-6">
+							<p><label> {{ gameData.player1 }} Score: </label></p>
+							<p> {{ gameData.p1Score }} </p>
+							<p>
+							<button class="btn btn-success" ng-click="addp1()">+</button>
+							<button class="btn btn-danger" ng-click="subp1()">-</button>
+							</p>
+						</div>
+
+						<div class="col-sm-6">
+							<p> <label>{{ gameData.player2 }} Score:</label> </p>
+							<p> {{ gameData.p2Score }} </p>
+							<p>
+							<button class="btn btn-success" ng-click="addp2()">+</button>
+							<button class="btn btn-danger" ng-click="subp2()">-</button>
+							</p>
+						</div>
+					</div> <!-- /row -->
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			        <button type="button" class="btn btn-primary" ng-click="saveChanges()" data-dismiss="modal">Save changes</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+
+			<!-- / Edit Modal -->			
 
 		  <table class="table">
-		  	<tr ng-repeat="game in games">  
-		  		<td> Test1 </td>
-		  		<td> Test 11 </td>
+		  	<tr>
+		  		<td><b>ID</b></td>
+		  		<td><b>Date</b></td>
+		  		<td><b>Player 1</b></td>
+		  		<td><b>Score</b></td>
+		  		<td><b>Player 2</b></td>
+		  		<td><b>Score</b></td>
+		  	</tr>
+		  	<tr ng-repeat="game in games">
+		  		<td> {{ game.gameid }} </td>  
+		  		<td> {{ game.date }} </td>
+		  		<td> {{ game.user1 }} </td>
+		  		<td> {{ game.user1score }} </td>
+		  		<td> {{ game.user2 }} </td>
+		  		<td> {{ game.user2score }} </td>
+		  		<td> <button type="button" class="btn btn-primary" ng-click="edit(game.gameid)" data-toggle="modal" data-target="#editModal">
+			  		Edit
+				</button></td>
+		  		<td> <button class="btn btn-danger" ng-click="deleteGame(game.gameid)"> Delete </button></td>
 		  	</tr>
 		  </table>
 	</div>
